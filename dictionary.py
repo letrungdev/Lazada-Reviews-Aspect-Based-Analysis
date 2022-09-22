@@ -127,5 +127,7 @@ dictionary = {
     },
 }
 
-
+degree = ["rất", "quá", "khá", "hơi", "cũng"]
+to_noun = ["thiết kế", "cấu hình", "pin"]
+to_adj = ["ok", "trâu"]
 nonsenses = ["giao hàng", "đóng gói", "nhân viên", "cửa hàng"]
