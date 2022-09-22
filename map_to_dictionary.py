@@ -1,11 +1,12 @@
 from underthesea import sent_tokenize, pos_tag, dependency_parse
 from preprocess import text_preprocess
 from improve_pos_tag import fix_pos_tag, fix_degree
-from dictionary import nonsenses,
+from dictionary import nonsenses
 
 
-def aspect_value(text):
-    opinion = {}
+# extract aspect and value from text review
+def get_aspect_value(text):
+    aspect_value = {}
     sentences = sent_tokenize(text)
     for sentence in sentences:
         sentence = text_preprocess(sentence)
@@ -26,24 +27,34 @@ def aspect_value(text):
                     if i[1] == 'N':
                         for j in word_tags[(index+1):]:
                             if j[1] == 'A':
-                                opinion[i[0]] = j[0]
+                                aspect_value[i[0]] = j[0]
                                 break
 
-    return opinion
+    return aspect_value
 
 
-def standardized_result(list_aspect, aspects):
-    # initialize point
+# get list aspect of a category from dictionary
+def get_list_aspect(dictionary, category):
+    category_dict = dictionary[category]
+    list_aspect = category_dict['object']['name'].copy()
+    for key in category_dict['aspect']:
+        for n in category_dict['aspect'][key]['name']:
+            list_aspect.append(n)
+    return list_aspect
+
+
+# map to dictionary
+def map_to_dictionary(category_dict, list_aspect, aspect_value):
     point_dict = {'điện thoại': []}
     for n in category_dict['aspect']:
         point_dict[n] = []
 
-    for key in list(aspects):
-        values = aspects[key].copy()
+    for key in list(aspect_value):
+        values = aspect_value[key].copy()
 
         # xoa key neu key khong nam trong tap aspect list_aspect lay tu dictionary
         if key not in list_aspect:
-            aspects.pop(key)
+            aspect_value.pop(key)
             continue
 
         # gop key trong tap aspect chi san pham va map value voi diem tu dictionary
@@ -76,9 +87,3 @@ def aspect_average_point(point_dict):
     return point_dict
 
 
-def get_list_aspect(dictionary, category):
-    list_aspect = dictionary[category]['object']['name'].copy()
-    for key in category_dict['aspect']:
-        for n in category_dict['aspect'][key]['name']:
-            list_aspect.append(n)
-    return list_aspect
